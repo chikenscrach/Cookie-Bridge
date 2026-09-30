@@ -12,21 +12,13 @@ permissions:
 
 jobs:
   release:
-    if: github.event.head_commit.message == 'release: publish v1.1.0'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Check out release commit
         uses: actions/checkout@v4
-
-      - name: Stop if release already exists
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if gh release view v1.1.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "Release v1.1.0 already exists."
-            exit 0
-          fi
+        with:
+          ref: 283815b2a3ad7f8b31567d0a4904b78f425a1a3d
 
       - name: Build extension ZIP
         run: |
@@ -76,7 +68,7 @@ jobs:
           gh release create v1.1.0 \
             dist/cookie-bridge-v1.1.0.zip \
             --repo "$GITHUB_REPOSITORY" \
-            --target "$GITHUB_SHA" \
+            --target 283815b2a3ad7f8b31567d0a4904b78f425a1a3d \
             --title "Cookie Bridge v1.1.0" \
             --notes-file /tmp/release-notes.md \
             --latest
