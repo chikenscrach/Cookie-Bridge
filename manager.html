@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cookie Bridge · Cookie 搬家助手</title>
+  <link rel="icon" href="icons/32.png">
+  <link rel="stylesheet" href="manager.css">
+  <script type="module" src="manager.mjs"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="manager.html"><img src="icons/48.png" alt="" width="36" height="36"><span>Cookie Bridge<small>COOKIE 搬家助手</small></span></a>
+    <span class="local-badge"><span aria-hidden="true">●</span> 本機處理</span>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">YOUR COOKIES, IN YOUR HANDS</p><h1>讓 Cookie 搬個家。</h1><p class="lead">讀入備份、檢查屬性，再匯入你的瀏覽器。</p></div>
+      <div class="version">Chrome / Edge<span>Manifest V3 · v1.1.0</span></div>
+    </section>
+
+    <section id="context-banner" class="context-banner" role="status" aria-live="polite">
+      <strong id="context-label">正在確認視窗…</strong>
+      <p id="context-note">確認目前分頁的 Cookie 儲存區後，即可開始操作。</p>
+    </section>
+
+    <section class="site-card" aria-labelledby="site-title">
+      <div class="step-label"><span>01</span><h2 id="site-title">目標網站</h2></div>
+      <label class="sr-only" for="site">目標網站網址</label>
+      <input id="site" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://chatgpt.com">
+      <p class="hint">只處理符合此主機的 Cookie；網域 Cookie 仍適用於該網域的子網域。</p>
+    </section>
+
+    <div class="mode-switch" role="tablist" aria-label="操作模式">
+      <button id="import-tab" role="tab" aria-selected="true" aria-controls="import-panel">匯入 Cookie</button>
+      <button id="export-tab" role="tab" aria-selected="false" aria-controls="export-panel" tabindex="-1">匯出備份</button>
+    </div>
+
+    <section id="import-panel" role="tabpanel" aria-labelledby="import-tab">
+      <div class="card">
+        <div class="step-label"><span>02</span><h2>載入 Cookie 檔案</h2></div>
+        <label class="file-zone" id="file-zone">
+          <span class="file-icon" aria-hidden="true">↥</span><strong>選擇檔案，或拖曳到這裡</strong>
+          <span>支援 Netscape cookies.txt、Cookie JSON · 最大 5 MiB</span>
+          <input id="file" type="file" accept=".txt,.json,text/plain,application/json" aria-label="選擇 Cookie 檔案">
+        </label>
+        <p id="filename" class="file-info" role="status">尚未選擇檔案</p>
+        <details id="paste-details"><summary>也可以貼上 Cookie 資料</summary>
+          <label class="sr-only" for="source">Cookie 資料</label>
+          <textarea id="source" rows="5" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="貼上 cookies.txt 或 JSON；不接受 Cookie: name=value 請求標頭"></textarea>
+          <label class="check small"><input type="checkbox" id="show-source"> 顯示來源內容（可能含登入憑證）</label>
+        </details>
+        <div class="actions"><button id="preview" class="primary">解析並預覽 <span aria-hidden="true">→</span></button><button id="clear" class="ghost">清除畫面資料</button></div>
+      </div>
+
+      <section id="preview-section" class="card" hidden aria-labelledby="preview-title">
+        <div class="section-head"><div class="step-label"><span>03</span><h2 id="preview-title">確認匯入內容</h2></div><span id="format" class="pill"></span></div>
+        <div class="stats"><div><strong id="total-count">0</strong><span>來源筆數</span></div><div><strong id="ready-count">0</strong><span>可匯入</span></div><div><strong id="skip-count">0</strong><span>略過 / 無效</span></div></div>
+        <div id="warnings" class="notice" hidden></div>
+        <div class="table-wrap"><table><caption class="sr-only">Cookie 匯入預覽，不顯示 Cookie 值</caption><thead><tr>
+          <th><input id="select-all" type="checkbox" aria-label="全選可匯入項目"></th><th>Cookie 名稱 / 來源</th><th>Domain / Path</th><th>屬性</th><th>到期時間</th><th>狀態 / 說明</th>
+        </tr></thead><tbody id="preview-body"></tbody></table></div>
+        <div class="import-footer">
+          <label class="field-label" for="conflict">遇到相同 Cookie 時<select id="conflict"><option value="replace">覆寫（相同名稱、網域、路徑、分割）</option><option value="skip">保留現有 Cookie，略過此筆</option></select></label>
+          <button id="import" class="primary" disabled>匯入已選項目</button>
+        </div>
+        <p class="hint">按下匯入後，瀏覽器可能要求授權相關網域。只新增或覆寫已選項目，不會清空網站的其他 Cookie。</p>
+      </section>
+    </section>
+
+    <section id="export-panel" role="tabpanel" aria-labelledby="export-tab" hidden>
+      <div class="card export-card">
+        <div class="step-label"><span>02</span><h2>匯出網站備份</h2></div>
+        <p>匯出目標主機本身的 Cookie，包含所有路徑與 HttpOnly 項目。<br>若需要父網域的 Cookie，請另輸入父網域匯出。</p>
+        <label class="field-label" for="export-format">檔案格式<select id="export-format"><option value="json">JSON · 建議，可保存 SameSite 與分割資訊</option><option value="txt">Netscape cookies.txt · 舊工具相容格式</option></select></label>
+        <label class="field-label" for="partition-site">分割 Cookie 的頂層網站（選填）<input id="partition-site" type="text" autocomplete="off" spellcheck="false" placeholder="例如 https://example.com"></label>
+        <p class="hint">留白只匯出未分割 Cookie。填寫後另讀取指定頂層網站的分割 Cookie；分割資訊僅能以 JSON 匯出。兩者都使用上方標示的視窗模式。</p>
+        <div class="actions"><button id="export" class="primary">授權並下載備份 <span aria-hidden="true">↓</span></button></div>
+        <p class="hint">備份含原始 Cookie 值；請保管在自己的裝置，避免傳給他人。</p>
+      </div>
+    </section>
+
+    <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+    <section id="result-section" class="card" hidden aria-labelledby="result-title"><h2 id="result-title">匯入結果</h2><p id="result-summary"></p>
+      <div class="table-wrap"><table><thead><tr><th>Cookie</th><th>Domain / Path</th><th>結果</th></tr></thead><tbody id="result-body"></tbody></table></div>
+    </section>
+
+    <details class="help"><summary>關於登入狀態、資料格式與權限</summary>
+      <div class="help-grid"><div><h3>匯入成功代表什麼？</h3><p>代表瀏覽器已寫入並讀回 Cookie。網站仍可能因憑證過期、裝置綁定或其他狀態要求重新登入。其他分頁也可能覆寫剛匯入的 Cookie。</p></div>
+      <div><h3>為什麼推薦 JSON？</h3><p>cookies.txt 沒有 SameSite 與分割資訊。JSON 可保留 Cookie API 提供的主要屬性；它仍不是整個瀏覽器設定檔的備份。</p></div>
+      <div><h3>來源資料怎麼處理？</h3><p>資料只在此分頁的記憶體中處理，不會上傳、同步或寫入擴充功能的儲存空間。清除或關閉分頁會釋放來源資料；已匯入的 Cookie 與下載檔仍會保留。</p></div>
+      <div><h3>需要哪些權限？</h3><p>Cookie 權限用於讀寫；activeTab 只在點選圖示時取得目標網址。網站存取權在操作時逐站要求，可用下方按鈕撤銷。</p></div>
+      <div><h3>如何使用無痕模式？</h3><p>在擴充功能管理頁的「詳細資料」開啟「允許在無痕模式中執行」（Edge：允許 InPrivate），再於無痕視窗點選工具列圖示。上方應顯示「無痕視窗」。</p></div>
+      <div><h3>一般與無痕資料怎麼分開？</h3><p>每次操作都依此管理分頁決定儲存區。若要將一般 Cookie 搬到無痕，先在一般視窗匯出，再到無痕視窗匯入。同一設定檔的多個無痕視窗通常共用同一組無痕 Cookie。</p></div></div>
+      <button id="revoke" class="ghost">撤銷此工具已取得的網站權限</button>
+      <p class="hint">撤銷權限不會刪除已匯入的 Cookie。</p>
+    </details>
+    <footer>Cookie Bridge <span>·</span> 你的備份，留在你的裝置。</footer>
+  </main>
+</body>
+</html>

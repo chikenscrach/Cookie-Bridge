@@ -1,0 +1,18 @@
+# Local dependencies and editor/OS files
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local configuration
+.env
+.env.*
+
+# Cookie backups can contain authentication credentials.
+# Keep the artificial examples in examples/ tracked.
+/cookies.txt
+/cookies.json
+/cookies-*.txt
+/cookies-*.json
+/Cookie-Bridge-*.zip

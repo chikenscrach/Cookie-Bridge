@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Cookie Bridge · Cookie 搬家助手",
+  "version": "1.1.0",
+  "description": "在本機預覽、匯入 cookies.txt 或 JSON，並匯出指定網站的 Cookie。",
+  "minimum_chrome_version": "130",
+  "permissions": ["cookies", "activeTab"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "background": {"service_worker": "background.js", "type": "module"},
+  "action": {"default_title": "開啟 Cookie 搬家助手", "default_icon": {"16": "icons/16.png", "32": "icons/32.png"}},
+  "icons": {"16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png"},
+  "incognito": "split",
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'"
+  }
+}

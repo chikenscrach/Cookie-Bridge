@@ -1,0 +1,4 @@
+# Netscape HTTP Cookie File
+# Example data only; no real authentication cookie.
+#HttpOnly_example.com	FALSE	/	TRUE	0	__Host-demo	EXAMPLE_ONLY_NOT_A_REAL_SESSION
+.example.com	TRUE	/	TRUE	0	demo-theme	light
